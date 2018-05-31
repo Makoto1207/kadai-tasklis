@@ -17,12 +17,11 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks=Task::all();
+        $tasks = Task::all();
         
-        return view ('tasks.index',[
-            'tasks' =>$tasks,
+        return view('tasks.index', [
+            'tasks' => $tasks
             ]);
-        //
     }
 
     /**
@@ -32,11 +31,11 @@ class TasksController extends Controller
      */
     public function create()
     {
-         $task = new Task;
-
-        return view('tasks.create', [
+        $task = new Task;
+        
+        return view('tasks.create' , [
             'task' => $task,
-        ]);
+            ]);
     }
 
     /**
@@ -47,7 +46,13 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
+         $this->validate($request, [
+            'status' => 'required|max:10',   // add
+            'content' => 'required|max:191',
+        ]);
+        
         $task = new Task;
+        $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
 
@@ -60,13 +65,14 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-   public function show($id)
+     
+    public function show($id)
     {
         $task = Task::find($id);
-
+        
         return view('tasks.show', [
             'task' => $task,
-        ]);
+            ]);
     }
 
     /**
@@ -82,7 +88,6 @@ class TasksController extends Controller
         return view('tasks.edit', [
             'task' => $task,
         ]);
-
     }
 
     /**
@@ -93,8 +98,14 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
+    {   
+        $this->validate($request, [
+            'status' => 'required|max:10',   // add
+            'content' => 'required|max:191',
+        ]);
+        
         $task = Task::find($id);
+        $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
 
@@ -105,14 +116,11 @@ class TasksController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response$message = Message::find($id);
-        $message->delete();
-
-        return redirect('/');
+     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-         $task = Task::find($id);
+        $task = Task::find($id);
         $task->delete();
 
         return redirect('/');
